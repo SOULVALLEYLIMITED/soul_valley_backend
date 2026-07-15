@@ -1,0 +1,47 @@
+{
+    "basePath": "/",
+    "consumes": [
+        "application/json"
+    ],
+    "definitions": {},
+    "info": {
+        "title": "backend",
+        "version": "1.0.0",
+        "description": "Prisma, TypeScript, Swagger & tsoa Backend",
+        "license": {
+            "name": "ISC"
+        },
+        "contact": {}
+    },
+    "paths": {
+        "/auth": {
+            "get": {
+                "operationId": "GetStatus",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "security": [],
+                "parameters": []
+            }
+        }
+    },
+    "produces": [
+        "application/json"
+    ],
+    "swagger": "2.0",
+    "securityDefinitions": {
+        "jwt": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

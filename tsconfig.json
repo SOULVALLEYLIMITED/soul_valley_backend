@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "exactOptionalPropertyTypes": false,  // Add this
+    "noUnusedLocals": false,  // Add this
+    "noUnusedParameters": false  // Add this
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
