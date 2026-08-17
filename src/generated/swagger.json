@@ -3,7 +3,105 @@
 	"consumes": [
 		"application/json"
 	],
-	"definitions": {},
+	"definitions": {
+		"LoginResponse": {
+			"properties": {
+				"token": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"token"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"LoginRequest": {
+			"properties": {
+				"password": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"password"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"Contact": {
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"subject": {
+					"type": "string"
+				},
+				"message": {
+					"type": "string"
+				},
+				"status": {
+					"type": "string"
+				},
+				"createdAt": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"name",
+				"email",
+				"subject",
+				"message",
+				"status",
+				"createdAt"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"ContactCreateRequest": {
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"subject": {
+					"type": "string"
+				},
+				"message": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name",
+				"email",
+				"subject",
+				"message"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"ContactStatusUpdateRequest": {
+			"properties": {
+				"status": {
+					"type": "string",
+					"description": "One of: new | read | replied"
+				}
+			},
+			"required": [
+				"status"
+			],
+			"type": "object",
+			"additionalProperties": false
+		}
+	},
 	"info": {
 		"title": "backend",
 		"version": "1.0.0",
@@ -28,8 +126,189 @@
 						}
 					}
 				},
+				"tags": [
+					"Auth"
+				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"$ref": "#/definitions/LoginResponse"
+						}
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Admin login for the dashboard. Exchanges the admin password for a JWT.",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/LoginRequest"
+						}
+					}
+				]
+			}
+		},
+		"/contacts": {
+			"post": {
+				"operationId": "CreateContact",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"201": {
+						"description": "Created",
+						"schema": {
+							"$ref": "#/definitions/Contact"
+						}
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Public endpoint used by the website contact form.\nStores a new contact message.",
+				"tags": [
+					"Contacts"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ContactCreateRequest"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "ListContacts",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/Contact"
+							},
+							"type": "array"
+						}
+					}
+				},
+				"description": "List all contact messages, newest first. Requires admin auth.",
+				"tags": [
+					"Contacts"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/contacts/{id}": {
+			"patch": {
+				"operationId": "UpdateStatus",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"$ref": "#/definitions/Contact"
+						}
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Update the status of a contact (new | read | replied). Requires admin auth.",
+				"tags": [
+					"Contacts"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ContactStatusUpdateRequest"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteContact",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"properties": {
+								"success": {
+									"type": "boolean"
+								}
+							},
+							"required": [
+								"success"
+							],
+							"type": "object"
+						}
+					}
+				},
+				"description": "Delete a contact message. Requires admin auth.",
+				"tags": [
+					"Contacts"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"type": "string"
+					}
+				]
 			}
 		}
 	},

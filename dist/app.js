@@ -38,9 +38,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+const tsoa_1 = require("tsoa");
 const routes_1 = require("./generated/routes");
 exports.app = (0, express_1.default)();
+// CORS — allow the website + dashboard to call the API.
+// Set CORS_ORIGINS in the environment as a comma-separated list of allowed
+// origins (e.g. "https://soulvalley.tech,https://www.soulvalley.tech").
+// If unset, all origins are allowed (convenient for local development).
+const corsOrigins = process.env.CORS_ORIGINS?.split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+exports.app.use((0, cors_1.default)({
+    origin: corsOrigins && corsOrigins.length > 0 ? corsOrigins : true,
+}));
 // Middleware to parse JSON bodies
 exports.app.use(express_1.default.json());
 exports.app.use(express_1.default.urlencoded({ extended: true }));
@@ -52,6 +64,19 @@ exports.app.use("/docs", swagger_ui_express_1.default.serve, async (_req, res) =
 (0, routes_1.RegisterRoutes)(exports.app);
 // Global Error Handler for tsoa validation or generic errors
 exports.app.use(function errorHandler(err, req, res, next) {
+    // tsoa request-body / query validation errors
+    if (err instanceof tsoa_1.ValidateError) {
+        return res.status(422).json({
+            message: "Validation Failed",
+            details: err?.fields,
+        });
+    }
+    // Errors that explicitly carry an HTTP status (ApiError, auth failures, etc.)
+    if (err && typeof err.status === "number") {
+        return res.status(err.status).json({
+            message: err.message || "Request failed",
+        });
+    }
     if (err instanceof Error) {
         return res.status(500).json({
             message: "Internal Server Error",
@@ -60,4 +85,3 @@ exports.app.use(function errorHandler(err, req, res, next) {
     }
     return next();
 });
-//# sourceMappingURL=app.js.map

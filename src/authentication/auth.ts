@@ -1,5 +1,6 @@
 import { Request } from "express";
 import * as jwt from "jsonwebtoken";
+import { ApiError } from "../utils/ApiError";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-fallback-secret";
 
@@ -13,12 +14,13 @@ export function expressAuthentication(
 
     return new Promise((resolve, reject) => {
       if (!token) {
-        reject(new Error("No token provided"));
+        reject(new ApiError(401, "No token provided"));
+        return;
       }
-      
-      jwt.verify(token!, JWT_SECRET, (err: any, decoded: any) => {
+
+      jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
         if (err) {
-          reject(err);
+          reject(new ApiError(401, "Invalid or expired token"));
         } else {
           // Check scopes/permissions here if needed
           resolve(decoded);
@@ -26,6 +28,6 @@ export function expressAuthentication(
       });
     });
   }
-  
-  return Promise.reject(new Error("Unsupported security scheme"));
+
+  return Promise.reject(new ApiError(401, "Unsupported security scheme"));
 }
