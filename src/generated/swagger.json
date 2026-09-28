@@ -6,12 +6,18 @@
 	"definitions": {
 		"LoginResponse": {
 			"properties": {
+				"success": {
+					"type": "boolean"
+				},
 				"token": {
+					"type": "string"
+				},
+				"error": {
 					"type": "string"
 				}
 			},
 			"required": [
-				"token"
+				"success"
 			],
 			"type": "object",
 			"additionalProperties": false
@@ -28,7 +34,7 @@
 			"type": "object",
 			"additionalProperties": false
 		},
-		"Contact": {
+		"ContactResponse": {
 			"properties": {
 				"id": {
 					"type": "string"
@@ -48,7 +54,16 @@
 				"status": {
 					"type": "string"
 				},
+				"source": {
+					"type": "string"
+				},
+				"discoveryDetails": {
+					"additionalProperties": true
+				},
 				"createdAt": {
+					"type": "string"
+				},
+				"updatedAt": {
 					"type": "string"
 				}
 			},
@@ -59,12 +74,32 @@
 				"subject",
 				"message",
 				"status",
-				"createdAt"
+				"source",
+				"createdAt",
+				"updatedAt"
 			],
 			"type": "object",
 			"additionalProperties": false
 		},
-		"ContactCreateRequest": {
+		"CreateContactResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"data": {
+					"$ref": "#/definitions/ContactResponse"
+				},
+				"error": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"success"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"CreateContactRequest": {
 			"properties": {
 				"name": {
 					"type": "string"
@@ -88,15 +123,545 @@
 			"type": "object",
 			"additionalProperties": false
 		},
-		"ContactStatusUpdateRequest": {
+		"ContactsListResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"data": {
+					"items": {
+						"$ref": "#/definitions/ContactResponse"
+					},
+					"type": "array"
+				},
+				"error": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"success"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"SimpleResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"error": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"success"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"UpdateContactStatusRequest": {
 			"properties": {
 				"status": {
 					"type": "string",
-					"description": "One of: new | read | replied"
+					"enum": [
+						"new",
+						"read",
+						"replied"
+					],
+					"x-nullable": false
 				}
 			},
 			"required": [
 				"status"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"CommunityUpdateResponse": {
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"body": {
+					"type": "string"
+				},
+				"imageUrl": {
+					"type": "string",
+					"x-nullable": true
+				},
+				"createdAt": {
+					"type": "string"
+				},
+				"updatedAt": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"title",
+				"body",
+				"createdAt",
+				"updatedAt"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"CommunityUpdatesListResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"data": {
+					"items": {
+						"$ref": "#/definitions/CommunityUpdateResponse"
+					},
+					"type": "array"
+				},
+				"error": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"success"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"CreateCommunityUpdateRequest": {
+			"properties": {
+				"title": {
+					"type": "string"
+				},
+				"body": {
+					"type": "string"
+				},
+				"imageUrl": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"title",
+				"body"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"UpdateCommunityUpdateRequest": {
+			"properties": {
+				"title": {
+					"type": "string"
+				},
+				"body": {
+					"type": "string"
+				},
+				"imageUrl": {
+					"type": "string"
+				}
+			},
+			"type": "object",
+			"additionalProperties": false
+		},
+		"UploadImageResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"url": {
+					"type": "string"
+				},
+				"error": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"success"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"ChatResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"message": {
+					"type": "string"
+				},
+				"data": {
+					"properties": {
+						"usage": {
+							"properties": {
+								"totalTokens": {
+									"type": "number",
+									"format": "double"
+								},
+								"completionTokens": {
+									"type": "number",
+									"format": "double"
+								},
+								"promptTokens": {
+									"type": "number",
+									"format": "double"
+								}
+							},
+							"required": [
+								"totalTokens",
+								"completionTokens",
+								"promptTokens"
+							],
+							"type": "object"
+						},
+						"model": {
+							"type": "string"
+						},
+						"response": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"model",
+						"response"
+					],
+					"type": "object"
+				},
+				"error": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"success",
+				"message"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"ChatMessage": {
+			"properties": {
+				"role": {
+					"type": "string",
+					"enum": [
+						"user",
+						"assistant",
+						"system"
+					],
+					"x-nullable": false
+				},
+				"content": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"role",
+				"content"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"ChatRequest": {
+			"properties": {
+				"messages": {
+					"items": {
+						"$ref": "#/definitions/ChatMessage"
+					},
+					"type": "array"
+				}
+			},
+			"required": [
+				"messages"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"DiscoveryExtractionData": {
+			"properties": {
+				"organization": {
+					"type": "string"
+				},
+				"contact_name": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"problem": {
+					"type": "string"
+				},
+				"idea": {
+					"type": "string"
+				},
+				"current_process": {
+					"type": "string"
+				},
+				"target_users": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"desired_outcome": {
+					"type": "string"
+				},
+				"requirements": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"existing_systems": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"constraints": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"timeline": {
+					"type": "string"
+				},
+				"budget": {
+					"type": "string"
+				},
+				"open_questions": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"additional_context": {
+					"type": "string"
+				},
+				"ready_for_submission": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"organization",
+				"contact_name",
+				"email",
+				"problem",
+				"idea",
+				"current_process",
+				"target_users",
+				"desired_outcome",
+				"requirements",
+				"existing_systems",
+				"constraints",
+				"timeline",
+				"budget",
+				"open_questions",
+				"additional_context",
+				"ready_for_submission"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"DiscoveryExtractionResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"data": {
+					"$ref": "#/definitions/DiscoveryExtractionData"
+				},
+				"error": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"success"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"ExtractRequest": {
+			"properties": {
+				"messages": {
+					"items": {
+						"$ref": "#/definitions/ChatMessage"
+					},
+					"type": "array"
+				}
+			},
+			"required": [
+				"messages"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"StreamRequest": {
+			"properties": {
+				"messages": {
+					"items": {
+						"$ref": "#/definitions/ChatMessage"
+					},
+					"type": "array"
+				}
+			},
+			"required": [
+				"messages"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"SubmitDiscoveryResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"message": {
+					"type": "string"
+				},
+				"error": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"success",
+				"message"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"SubmitDiscoveryRequest": {
+			"properties": {
+				"organization": {
+					"type": "string"
+				},
+				"contact_name": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"problem": {
+					"type": "string"
+				},
+				"idea": {
+					"type": "string"
+				},
+				"current_process": {
+					"type": "string"
+				},
+				"target_users": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"desired_outcome": {
+					"type": "string"
+				},
+				"requirements": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"existing_systems": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"constraints": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"timeline": {
+					"type": "string"
+				},
+				"budget": {
+					"type": "string"
+				},
+				"open_questions": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"additional_context": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"contact_name",
+				"email"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"ModelsResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"data": {
+					"properties": {
+						"models": {
+							"items": {
+								"properties": {
+									"description": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"description",
+									"name",
+									"id"
+								],
+								"type": "object"
+							},
+							"type": "array"
+						}
+					},
+					"required": [
+						"models"
+					],
+					"type": "object"
+				}
+			},
+			"required": [
+				"success",
+				"data"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"HealthResponse": {
+			"properties": {
+				"success": {
+					"type": "boolean"
+				},
+				"status": {
+					"type": "string"
+				},
+				"message": {
+					"type": "string"
+				},
+				"timestamp": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"success",
+				"status",
+				"message",
+				"timestamp"
 			],
 			"type": "object",
 			"additionalProperties": false
@@ -167,26 +732,266 @@
 				]
 			}
 		},
-		"/contacts": {
+		"/api/contacts": {
 			"post": {
-				"operationId": "CreateContact",
+				"operationId": "Create",
 				"produces": [
 					"application/json"
 				],
 				"responses": {
 					"201": {
-						"description": "Created",
+						"description": "Contact created successfully",
 						"schema": {
-							"$ref": "#/definitions/Contact"
+							"$ref": "#/definitions/CreateContactResponse"
 						}
+					},
+					"400": {
+						"description": "Missing required fields"
 					}
 				},
 				"consumes": [
 					"application/json"
 				],
-				"description": "Public endpoint used by the website contact form.\nStores a new contact message.",
+				"description": "Public — submit the website's \"Contact Us\" form.",
 				"tags": [
 					"Contacts"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "request",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/CreateContactRequest"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "List",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Contacts retrieved successfully",
+						"schema": {
+							"$ref": "#/definitions/ContactsListResponse"
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get all contacts (admin only)",
+				"tags": [
+					"Contacts"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "Authorization",
+						"required": false,
+						"type": "string"
+					}
+				]
+			}
+		},
+		"/api/contacts/login": {
+			"post": {
+				"operationId": "Login",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Logged in successfully",
+						"schema": {
+							"$ref": "#/definitions/LoginResponse"
+						}
+					},
+					"401": {
+						"description": "Incorrect password"
+					},
+					"500": {
+						"description": "Server auth not configured"
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Admin login - get JWT token",
+				"tags": [
+					"Contacts"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "request",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/LoginRequest"
+						}
+					}
+				]
+			}
+		},
+		"/api/contacts/{id}/status": {
+			"put": {
+				"operationId": "UpdateStatus",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Status updated successfully",
+						"schema": {
+							"$ref": "#/definitions/SimpleResponse"
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Contact not found"
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Update contact status (admin only)",
+				"tags": [
+					"Contacts"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "request",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/UpdateContactStatusRequest"
+						}
+					},
+					{
+						"in": "header",
+						"name": "Authorization",
+						"required": false,
+						"type": "string"
+					}
+				]
+			}
+		},
+		"/api/contacts/{id}": {
+			"delete": {
+				"operationId": "Remove",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Contact deleted successfully",
+						"schema": {
+							"$ref": "#/definitions/SimpleResponse"
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Contact not found"
+					}
+				},
+				"description": "Delete a contact (admin only)",
+				"tags": [
+					"Contacts"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "header",
+						"name": "Authorization",
+						"required": false,
+						"type": "string"
+					}
+				]
+			}
+		},
+		"/api/community/updates": {
+			"get": {
+				"operationId": "List",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Updates retrieved successfully",
+						"schema": {
+							"$ref": "#/definitions/CommunityUpdatesListResponse"
+						}
+					}
+				},
+				"description": "Public — list community updates for the site's community page, newest first.",
+				"tags": [
+					"Community"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "Create",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Update created successfully",
+						"schema": {
+							"properties": {
+								"error": {
+									"type": "string"
+								},
+								"data": {
+									"$ref": "#/definitions/CommunityUpdateResponse"
+								},
+								"success": {
+									"type": "boolean"
+								}
+							},
+							"required": [
+								"success"
+							],
+							"type": "object"
+						}
+					},
+					"400": {
+						"description": "Missing required fields"
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Create a community update (admin only).",
+				"tags": [
+					"Community"
 				],
 				"security": [],
 				"parameters": [
@@ -195,65 +1000,57 @@
 						"name": "body",
 						"required": true,
 						"schema": {
-							"$ref": "#/definitions/ContactCreateRequest"
+							"$ref": "#/definitions/CreateCommunityUpdateRequest"
 						}
+					},
+					{
+						"in": "header",
+						"name": "Authorization",
+						"required": false,
+						"type": "string"
 					}
 				]
-			},
-			"get": {
-				"operationId": "ListContacts",
-				"produces": [
-					"application/json"
-				],
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"schema": {
-							"items": {
-								"$ref": "#/definitions/Contact"
-							},
-							"type": "array"
-						}
-					}
-				},
-				"description": "List all contact messages, newest first. Requires admin auth.",
-				"tags": [
-					"Contacts"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": []
 			}
 		},
-		"/contacts/{id}": {
+		"/api/community/updates/{id}": {
 			"patch": {
-				"operationId": "UpdateStatus",
+				"operationId": "Edit",
 				"produces": [
 					"application/json"
 				],
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Update edited successfully",
 						"schema": {
-							"$ref": "#/definitions/Contact"
+							"properties": {
+								"error": {
+									"type": "string"
+								},
+								"data": {
+									"$ref": "#/definitions/CommunityUpdateResponse"
+								},
+								"success": {
+									"type": "boolean"
+								}
+							},
+							"required": [
+								"success"
+							],
+							"type": "object"
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
 					}
 				},
 				"consumes": [
 					"application/json"
 				],
-				"description": "Update the status of a contact (new | read | replied). Requires admin auth.",
+				"description": "Edit a community update (admin only).",
 				"tags": [
-					"Contacts"
+					"Community"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
@@ -266,13 +1063,370 @@
 						"name": "body",
 						"required": true,
 						"schema": {
-							"$ref": "#/definitions/ContactStatusUpdateRequest"
+							"$ref": "#/definitions/UpdateCommunityUpdateRequest"
 						}
+					},
+					{
+						"in": "header",
+						"name": "Authorization",
+						"required": false,
+						"type": "string"
 					}
 				]
 			},
 			"delete": {
-				"operationId": "DeleteContact",
+				"operationId": "Remove",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Update deleted successfully",
+						"schema": {
+							"$ref": "#/definitions/SimpleResponse"
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Delete a community update (admin only).",
+				"tags": [
+					"Community"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "header",
+						"name": "Authorization",
+						"required": false,
+						"type": "string"
+					}
+				]
+			}
+		},
+		"/api/community/upload-image": {
+			"post": {
+				"operationId": "UploadImage",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Image uploaded successfully",
+						"schema": {
+							"$ref": "#/definitions/UploadImageResponse"
+						}
+					},
+					"400": {
+						"description": "No file provided"
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"consumes": [
+					"multipart/form-data"
+				],
+				"description": "Upload an image to Cloudinary (admin only). Returns the hosted URL to\nuse as a community update's imageUrl.",
+				"tags": [
+					"Community"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "formData",
+						"name": "image",
+						"required": true,
+						"type": "file"
+					},
+					{
+						"in": "header",
+						"name": "Authorization",
+						"required": false,
+						"type": "string"
+					}
+				]
+			}
+		},
+		"/api/ai/chat": {
+			"post": {
+				"operationId": "Chat",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "AI response generated successfully",
+						"schema": {
+							"$ref": "#/definitions/ChatResponse"
+						}
+					},
+					"400": {
+						"description": "Bad request - missing or invalid messages"
+					},
+					"500": {
+						"description": "Internal server error"
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Get AI response from Groq (non-streaming)",
+				"tags": [
+					"AI"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "request",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ChatRequest"
+						}
+					}
+				]
+			}
+		},
+		"/api/ai/extract": {
+			"post": {
+				"operationId": "Extract",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Discovery data extracted successfully",
+						"schema": {
+							"$ref": "#/definitions/DiscoveryExtractionResponse"
+						}
+					},
+					"400": {
+						"description": "Bad request - missing or invalid messages"
+					},
+					"500": {
+						"description": "Internal server error"
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Extract structured discovery data from the full conversation so far.\nThis runs as its own Groq call (JSON mode, separate from Souly's\npersona) so the frontend never has to parse fields out of Souly's\nvisible reply — which by design never contains the raw JSON report.\nThe `ready_for_submission` flag is the frontend's signal to call\n/api/ai/submit; it only becomes true once the user has explicitly\nconfirmed a summary Souly presented back to them.",
+				"tags": [
+					"AI"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "request",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ExtractRequest"
+						}
+					}
+				]
+			}
+		},
+		"/api/ai/chat/stream": {
+			"post": {
+				"operationId": "ChatStream",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"additionalProperties": true
+						}
+					},
+					"400": {
+						"description": "",
+						"schema": {
+							"additionalProperties": true
+						}
+					},
+					"500": {
+						"description": "",
+						"schema": {
+							"additionalProperties": true
+						}
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Get AI response with streaming support (Server-Sent Events)",
+				"tags": [
+					"AI"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "request",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/StreamRequest"
+						}
+					}
+				]
+			}
+		},
+		"/api/ai/submit": {
+			"post": {
+				"operationId": "SubmitDiscovery",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Discovery submitted successfully",
+						"schema": {
+							"$ref": "#/definitions/SubmitDiscoveryResponse"
+						}
+					},
+					"400": {
+						"description": "Bad request - missing name or email"
+					},
+					"422": {
+						"description": "Unprocessable entity - invalid data format"
+					},
+					"500": {
+						"description": "Internal server error"
+					}
+				},
+				"consumes": [
+					"application/json"
+				],
+				"description": "Called once the frontend has a confirmed discovery report. Creates a\ncontact record with source=ai_chat so it shows up in the same dashboard\nas regular contact-form submissions, tagged distinctly.",
+				"tags": [
+					"AI"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "request",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/SubmitDiscoveryRequest"
+						}
+					}
+				]
+			}
+		},
+		"/api/ai/models": {
+			"get": {
+				"operationId": "GetModels",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Models retrieved successfully",
+						"schema": {
+							"$ref": "#/definitions/ModelsResponse"
+						}
+					}
+				},
+				"description": "Get available AI models",
+				"tags": [
+					"AI"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/ai/health": {
+			"get": {
+				"operationId": "Health",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "API is healthy",
+						"schema": {
+							"$ref": "#/definitions/HealthResponse"
+						}
+					}
+				},
+				"description": "Health check endpoint",
+				"tags": [
+					"AI"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/ai/ping": {
+			"get": {
+				"operationId": "Ping",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Pong",
+						"schema": {
+							"properties": {
+								"timestamp": {
+									"type": "string"
+								},
+								"pong": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"timestamp",
+								"pong"
+							],
+							"type": "object"
+						}
+					}
+				},
+				"description": "Simple ping endpoint for quick testing",
+				"tags": [
+					"AI"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/admin/test": {
+			"get": {
+				"operationId": "Test",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"$ref": "#/definitions/ChatResponse"
+						}
+					}
+				},
+				"description": "Test endpoint for admin dashboard",
+				"tags": [
+					"Admin"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/admin/status": {
+			"get": {
+				"operationId": "GetPing",
 				"produces": [
 					"application/json"
 				],
@@ -281,34 +1435,115 @@
 						"description": "Ok",
 						"schema": {
 							"properties": {
+								"environment": {
+									"type": "string"
+								},
+								"timestamp": {
+									"type": "string"
+								},
+								"status": {
+									"type": "string"
+								},
 								"success": {
 									"type": "boolean"
 								}
 							},
 							"required": [
+								"environment",
+								"timestamp",
+								"status",
 								"success"
 							],
 							"type": "object"
 						}
 					}
 				},
-				"description": "Delete a contact message. Requires admin auth.",
+				"description": "Get admin dashboard status",
 				"tags": [
-					"Contacts"
+					"Admin"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/admin/stats": {
+			"get": {
+				"operationId": "GetStats",
+				"produces": [
+					"application/json"
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"type": "string"
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"properties": {
+								"data": {
+									"properties": {
+										"repliedContacts": {
+											"type": "number",
+											"format": "double"
+										},
+										"readContacts": {
+											"type": "number",
+											"format": "double"
+										},
+										"newContacts": {
+											"type": "number",
+											"format": "double"
+										},
+										"totalContacts": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"repliedContacts",
+										"readContacts",
+										"newContacts",
+										"totalContacts"
+									],
+									"type": "object"
+								},
+								"success": {
+									"type": "boolean"
+								}
+							},
+							"required": [
+								"data",
+								"success"
+							],
+							"type": "object"
+						}
 					}
-				]
+				},
+				"description": "Get admin statistics summary",
+				"tags": [
+					"Admin"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/admin/contacts": {
+			"get": {
+				"operationId": "GetContacts",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"$ref": "#/definitions/ContactsListResponse"
+						}
+					}
+				},
+				"description": "Get contacts list (admin only)",
+				"tags": [
+					"Admin"
+				],
+				"security": [],
+				"parameters": []
 			}
 		}
 	},

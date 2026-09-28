@@ -66,7 +66,7 @@ let UserController = class UserController extends tsoa_1.Controller {
             throw new ApiError_1.ApiError(401, "Invalid password");
         }
         const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "7d" });
-        return { token };
+        return { success: true, token };
     }
 };
 exports.UserController = UserController;

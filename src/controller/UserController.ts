@@ -1,16 +1,9 @@
 import { Body, Controller, Get, Post, Route, Tags } from "tsoa";
 import * as jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError";
+import { LoginRequest, LoginResponse } from "../types"; // ✅ Import from shared types
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-fallback-secret";
-
-export interface LoginRequest {
-  password: string;
-}
-
-export interface LoginResponse {
-  token: string;
-}
 
 @Route("auth")
 @Tags("Auth")
@@ -36,6 +29,6 @@ export class UserController extends Controller {
     }
 
     const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "7d" });
-    return { token };
+    return { success: true, token };
   }
 }

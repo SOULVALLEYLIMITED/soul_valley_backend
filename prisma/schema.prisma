@@ -4,27 +4,63 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id String @id @default(uuid())
+  id   String @id @default(uuid())
   name String
 }
 
+enum ContactStatus {
+  new
+  read
+  replied
+}
+
+enum ContactSource {
+  contact_form
+  ai_chat
+}
+
 model Contact {
-  id        String   @id @default(uuid())
-  name      String
-  email     String
-  subject   String
-  message   String
-  status    String   @default("new") // new | read | replied
+  id      String        @id @default(uuid())
+  name    String
+  email   String
+  subject String
+  message String
+  status  ContactStatus @default(new)
+  source  ContactSource @default(contact_form)
+
+  // Structured discovery data from Souly — only populated when source is
+  // ai_chat. Kept as JSON since its shape mirrors the AI's discovery report
+  // (organization, problem, idea, target_users[], requirements[], timeline,
+  // budget, etc.) rather than a fixed set of business columns.
+  discoveryDetails Json?
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([createdAt])
+  @@index([status])
+  @@index([source])
+}
+
+// Admin-authored posts shown on the public "Community" page — general
+// updates/announcements about what Soul Valley is doing.
+model CommunityUpdate {
+  id       String  @id @default(uuid())
+  title    String
+  body     String
+  imageUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([createdAt])
 }
