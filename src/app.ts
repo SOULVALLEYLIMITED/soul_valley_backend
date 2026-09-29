@@ -58,9 +58,30 @@ app.use(function errorHandler(
   }
 
   if (err instanceof Error) {
+    // Log the full error server-side — Prisma driver-adapter errors (e.g.
+    // Node's AggregateError from a failed multi-address connection attempt)
+    // often have an empty top-level .message, so the client-facing
+    // "details" can look blank even though the real cause is available here.
+    console.error("Unhandled error:", err);
+    if (Array.isArray((err as any).errors)) {
+      console.error(
+        "Nested errors:",
+        (err as any).errors.map((e: any) => e?.message || e)
+      );
+    }
+    if ((err as any).cause) {
+      console.error("Cause:", (err as any).cause);
+    }
+
     return res.status(500).json({
       message: "Internal Server Error",
       details: err.message,
+      code: (err as any).code,
+      name: err.name,
+      cause: (err as any).cause?.message || (err as any).cause,
+      nested: Array.isArray((err as any).errors)
+        ? (err as any).errors.map((e: any) => e?.message || String(e))
+        : undefined,
     });
   }
 
